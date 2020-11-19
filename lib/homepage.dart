@@ -10,18 +10,23 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  var temp;
+  double temp;
   var description;
   var currently;
   var humidity;
   var windspeed;
-
+  double newtemp;
+  String temp1;
+  var _currentitemselected = "Mumbai";
+  var city = ["Mumbai", "Pune", "Delhi"];
   Future getWeather() async {
     http.Response responce = await http.get(
-        "http://api.openweathermap.org/data/2.5/weather?q=Mumbai&appid=e060720c06febab8a044900eb9e73ce8");
+        "http://api.openweathermap.org/data/2.5/weather?q=$_currentitemselected&appid=e060720c06febab8a044900eb9e73ce8");
     var results = jsonDecode(responce.body);
     setState(() {
-      this.temp = results["main"]["temp"];
+      temp = results["main"]["temp"];
+      this.newtemp = this.temp - 273.15;
+      this.temp1 = this.newtemp.toString().substring(0, 5);
       this.description = results["weather"][0]["description"];
       this.currently = results["weather"][0]["main"];
       this.humidity = results["main"]["humidity"];
@@ -31,7 +36,6 @@ class _HomePageState extends State<HomePage> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     this.getWeather();
   }
@@ -41,6 +45,7 @@ class _HomePageState extends State<HomePage> {
     SizeConfig().init(context);
     return SafeArea(
       child: Scaffold(
+        extendBodyBehindAppBar: true,
         body: Column(
           children: [
             Container(
@@ -51,15 +56,30 @@ class _HomePageState extends State<HomePage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
+                  DropdownButton<String>(
+                    items: city.map((String dropDownStringItem) {
+                      return DropdownMenuItem<String>(
+                        value: dropDownStringItem,
+                        child: Text(dropDownStringItem),
+                      );
+                    }).toList(),
+                    onChanged: (String newvalueselected) {
+                      setState(() {
+                        this._currentitemselected = newvalueselected;
+                        this.getWeather();
+                      });
+                    },
+                    value: _currentitemselected,
+                  ),
                   Text(
-                    "Currently in mumbai",
+                    "Currently in $_currentitemselected",
                     style: TextStyle(
                         color: Colors.white,
                         fontSize: 14,
                         fontWeight: FontWeight.bold),
                   ),
                   Text(
-                    temp != null ? temp.toString() + "\u00B0" : "loading",
+                    temp1 != null ? temp1.toString() + "\u00B0" : "loading",
                     style: TextStyle(
                         color: Colors.white,
                         fontSize: 40,
@@ -84,7 +104,7 @@ class _HomePageState extends State<HomePage> {
                       leading: FaIcon(FontAwesomeIcons.thermometerHalf),
                       title: Text("Temprature"),
                       trailing: Text(
-                        temp != null ? temp.toString() + "\u00B0" : "loading",
+                        temp1 != null ? temp1.toString() + "\u00B0" : "loading",
                       ),
                     ),
                     ListTile(
