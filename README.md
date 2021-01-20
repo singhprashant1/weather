@@ -1,6 +1,7 @@
 # weather
 
 A new Flutter project.
+![image](https://github.com/singhprashant1/weather/blob/master/image.jpeg)
 
 ## Getting Started
 
