@@ -1,6 +1,7 @@
 # weather
 
 A new Flutter project.
+In this Project you can see weather information of several location
 ![image](https://github.com/singhprashant1/weather/blob/master/image.jpeg)
 
 ## Getting Started
